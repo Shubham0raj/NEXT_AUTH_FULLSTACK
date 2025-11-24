@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import Link from 'next/link'
 import toast, { Toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
@@ -20,16 +20,21 @@ export default function profilePage() {
         }
     }
 
-    const logout = async()=>{
-        try {
-            await axios.get("/api/users/logout")
-            toast.success("LOGOUT SUCCESS")
-            toast.success("/login")
-        } catch (error:any) {
-            console.log(error.message)
-            toast.error(error.message)
-        }
+const logout = async () => {
+  try {
+    const response = await axios.get("/api/users/logout");
+
+    if (response.status === 200) {
+      toast.success("Logged out successfully");
+
+      // Always use replace() so back button doesn't return to protected pages
+      router.replace("/login");
     }
+  } catch (error:any) {
+    console.error("Logout Error:", error);
+    toast.error(error.response?.data?.message || "Logout failed");
+  }
+};
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen py-2'>
