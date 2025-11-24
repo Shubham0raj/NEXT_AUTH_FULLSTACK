@@ -6,6 +6,7 @@ export function proxy(request: NextRequest) {
 
 
     const publicPaths = ["/", "/login", "/signup", "/verifyemail"]
+
     const isPublic = publicPaths.includes(path)
     
     const token = request.cookies.get("token")?.value
@@ -14,7 +15,7 @@ export function proxy(request: NextRequest) {
     if (!isPublic && !token) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
-    if(publicPaths.includes(path)){
+    if(isPublic){
       return NextResponse.next();
     }
     // 2️⃣ Auth user trying to access login/signup → send home
@@ -29,6 +30,6 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     
-    "/", "/login", "/signup", "/verifyemail"
+    "/", "/login", "/signup", "/verifyemail","/profile"
   ]
 }
